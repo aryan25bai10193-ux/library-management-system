@@ -1,0 +1,56 @@
+digraph Architecture {
+    rankdir=TB;
+    fontname="Helvetica";
+    node [fontname="Helvetica", shape=box, style="rounded,filled", fontsize=12];
+    edge [fontname="Helvetica", fontsize=10];
+
+    subgraph cluster_ui {
+        label="Presentation Layer";
+        style=filled; color="#dbe9f6";
+        Main [label="Main.java\n(CLI Menu Loop)", fillcolor="#a9cce3"];
+    }
+
+    subgraph cluster_service {
+        label="Business Logic Layer";
+        style=filled; color="#e8f6e8";
+        LibraryService [label="LibraryService\n(issue / return / renew / search)", fillcolor="#a9dfbf"];
+        OverdueChecker [label="OverdueChecker\n(background Thread)", fillcolor="#f9e79f"];
+    }
+
+    subgraph cluster_dao {
+        label="Data Access Layer";
+        style=filled; color="#fdebd0";
+        BookDAO [fillcolor="#f5cba7"];
+        MemberDAO [fillcolor="#f5cba7"];
+        LibrarianDAO [fillcolor="#f5cba7"];
+        TransactionDAO [fillcolor="#f5cba7"];
+        DatabaseManager [label="DatabaseManager\n(JDBC Connection)", fillcolor="#eb984e"];
+    }
+
+    subgraph cluster_util {
+        label="Utilities";
+        style=filled; color="#f2eefc";
+        FineCalculator [fillcolor="#d7bde2"];
+        IsbnValidator [fillcolor="#d7bde2"];
+        ReportExporter [label="ReportExporter\n(File I/O Streams)", fillcolor="#d7bde2"];
+    }
+
+    DB [label="SQLite Database\n(library.db)", shape=cylinder, fillcolor="#aeb6bf"];
+    Files [label="Text Reports /\nActivity Log", shape=folder, fillcolor="#aeb6bf"];
+
+    Main -> LibraryService;
+    Main -> OverdueChecker [label="starts", style=dashed];
+    OverdueChecker -> LibraryService [label="reads (synchronized)"];
+    LibraryService -> BookDAO;
+    LibraryService -> MemberDAO;
+    LibraryService -> TransactionDAO;
+    LibraryService -> FineCalculator;
+    LibraryService -> ReportExporter;
+    Main -> IsbnValidator;
+    BookDAO -> DatabaseManager;
+    MemberDAO -> DatabaseManager;
+    LibrarianDAO -> DatabaseManager;
+    TransactionDAO -> DatabaseManager;
+    DatabaseManager -> DB;
+    ReportExporter -> Files;
+}

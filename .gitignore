@@ -1,0 +1,21 @@
+# Maven build output
+target/
+
+# Runtime-generated data (recreated automatically on first run)
+data/
+reports/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

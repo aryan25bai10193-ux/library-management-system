@@ -1,0 +1,45 @@
+digraph UseCase {
+    rankdir=LR;
+    fontname="Helvetica";
+    node [fontname="Helvetica", fontsize=11];
+
+    Member_actor [label="Member", shape=plaintext, image="" ];
+    Librarian_actor [label="Librarian", shape=plaintext];
+
+    node [shape=ellipse, style=filled, fillcolor="#d6eaf8"];
+    UC1 [label="Search Catalog"];
+    UC2 [label="View Book Availability"];
+    UC3 [label="Request Book\n(handled by Librarian)"];
+
+    node [fillcolor="#a9dfbf"];
+    UC4 [label="Add / Remove Book"];
+    UC5 [label="Register Member"];
+    UC6 [label="Issue Book"];
+    UC7 [label="Return Book"];
+    UC8 [label="Renew Loan"];
+    UC9 [label="View Overdue Loans"];
+    UC10 [label="Export Catalog /\nOverdue Report"];
+
+    node [shape=box, style=filled, fillcolor="#f9e79f"];
+    SYS [label="Background: OverdueChecker\nscans for overdue loans\nevery 30s"];
+
+    {rank=same; Member_actor; Librarian_actor;}
+
+    Member_actor -> UC1;
+    Member_actor -> UC2;
+    Member_actor -> UC3;
+    UC3 -> UC6 [label="<<extend>>", style=dashed, arrowhead=vee];
+
+    Librarian_actor -> UC4;
+    Librarian_actor -> UC5;
+    Librarian_actor -> UC6;
+    Librarian_actor -> UC7;
+    Librarian_actor -> UC8;
+    Librarian_actor -> UC9;
+    Librarian_actor -> UC10;
+
+    UC6 -> UC2 [label="<<include>>", style=dashed, arrowhead=vee, dir=back];
+    UC7 -> UC9 [label="<<include>>\n(fine calc)", style=dashed, arrowhead=vee];
+
+    SYS -> UC9 [label="feeds", style=dotted];
+}

@@ -1,0 +1,37 @@
+digraph ClassDiagram {
+    rankdir=BT;
+    fontname="Helvetica";
+    node [fontname="Helvetica", shape=record, fontsize=10];
+    edge [fontname="Helvetica", fontsize=9];
+
+    Person [label="{\<\<abstract\>\>\nPerson|- id: String\l- name: String\l- email: String\l- phone: String\l|+ getRole(): String \{abstract\}\l+ describe(): String\l}"];
+    Member [label="{Member|- membershipType: MembershipType\l- joinDate: LocalDate\l- currentBooksIssued: int\l- outstandingFine: double\l|+ getRole(): String\l+ canBorrowMore(): boolean\l+ addFine(amount): void\l}"];
+    Librarian [label="{Librarian|- staffId: String\l|+ getRole(): String\l}"];
+
+    Book [label="{Book|- isbn: String\l- title: String\l- author: String\l- genre: String\l- publicationYear: int\l- status: BookStatus\l|+ isAvailable(): boolean\l+ matches(keyword): boolean\l}"];
+
+    Transaction [label="{Transaction|- transactionId: int\l- isbn: String\l- memberId: String\l- issueDate: LocalDate\l- dueDate: LocalDate\l- returnDate: LocalDate\l|+ renew(): LocalDate\l+ isRenewable(): boolean\l+ daysOverdue(asOf): long\l}"];
+
+    Searchable [label="{\<\<interface\>\>\nSearchable\<T\>|+ search(keyword): List\<T\>\l}"];
+    Renewable [label="{\<\<interface\>\>\nRenewable|+ renew(): LocalDate\l+ isRenewable(): boolean\l}"];
+
+    BookStatus [label="{\<\<enum\>\>\nBookStatus|AVAILABLE\lISSUED\lRESERVED\lLOST\l}"];
+    MembershipType [label="{\<\<enum\>\>\nMembershipType|STUDENT\lFACULTY\lGUEST\l|+ getMaxBooksAllowed(): int\l+ getLoanPeriodDays(): int\l}"];
+
+    LibraryService [label="{LibraryService|- catalogCache: Map\<String,Book\>\l|+ issueBook(isbn, memberId): Transaction\l+ returnBook(isbn, memberId): double\l+ renewLoan(isbn, memberId): LocalDate\l+ searchBooks(keyword): List\<Book\>\l}"];
+
+    BookDAO [label="{BookDAO|+ addBook(book): void\l+ getByIsbn(isbn): Book\l+ search(keyword): List\<Book\>\l}"];
+
+    Member -> Person [arrowhead=empty label="extends"];
+    Librarian -> Person [arrowhead=empty label="extends"];
+    Transaction -> Renewable [arrowhead=empty style=dashed label="implements"];
+    BookDAO -> Searchable [arrowhead=empty style=dashed label="implements"];
+
+    Book -> BookStatus [arrowhead=diamond label="has-a" fontsize=8];
+    Member -> MembershipType [arrowhead=diamond label="has-a" fontsize=8];
+
+    LibraryService -> BookDAO [arrowhead=vee label="uses"];
+    LibraryService -> Transaction [arrowhead=vee label="creates"];
+    Transaction -> Book [arrowhead=vee label="references (isbn)" style=dotted];
+    Transaction -> Member [arrowhead=vee label="references (memberId)" style=dotted];
+}

@@ -1,0 +1,13 @@
+digraph ER {
+    rankdir=LR;
+    fontname="Helvetica";
+    node [fontname="Helvetica", shape=record, fontsize=10];
+
+    books [label="{BOOKS|isbn: TEXT (PK)\ltitle: TEXT\lauthor: TEXT\lgenre: TEXT\lpublication_year: INTEGER\lstatus: TEXT\l}"];
+    members [label="{MEMBERS|id: TEXT (PK)\lname: TEXT\lemail: TEXT\lphone: TEXT\lmembership_type: TEXT\ljoin_date: TEXT\loutstanding_fine: REAL\l}"];
+    librarians [label="{LIBRARIANS|id: TEXT (PK)\lname: TEXT\lemail: TEXT\lphone: TEXT\lstaff_id: TEXT\l}"];
+    transactions [label="{TRANSACTIONS|transaction_id: INTEGER (PK)\lisbn: TEXT (FK)\lmember_id: TEXT (FK)\lissue_date: TEXT\ldue_date: TEXT\lreturn_date: TEXT\lrenewed: INTEGER\lfine_charged: REAL\l}"];
+
+    books -> transactions [label="1..1 to 0..N" arrowhead=none];
+    members -> transactions [label="1..1 to 0..N" arrowhead=none];
+}

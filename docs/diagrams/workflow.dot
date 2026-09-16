@@ -1,0 +1,48 @@
+digraph Workflow {
+    rankdir=TB;
+    fontname="Helvetica";
+    node [fontname="Helvetica", fontsize=11];
+    edge [fontname="Helvetica", fontsize=10];
+
+    start [label="Start: Librarian selects\n\"Issue Book\"", shape=oval, style=filled, fillcolor="#a9dfbf"];
+    input [label="Enter ISBN and Member ID", shape=box, style=filled, fillcolor="#d6eaf8"];
+    validIsbn [label="ISBN format valid?", shape=diamond, style=filled, fillcolor="#fdebd0"];
+    isbnErr [label="Throw\nInvalidISBNException", shape=box, style=filled, fillcolor="#f5b7b1"];
+    findBook [label="Look up Book by ISBN", shape=box, style=filled, fillcolor="#d6eaf8"];
+    bookExists [label="Book found?", shape=diamond, style=filled, fillcolor="#fdebd0"];
+    bookNotFoundErr [label="Throw\nBookNotFoundException", shape=box, style=filled, fillcolor="#f5b7b1"];
+    bookAvail [label="Status == AVAILABLE?", shape=diamond, style=filled, fillcolor="#fdebd0"];
+    bookUnavailErr [label="Throw\nBookNotAvailableException", shape=box, style=filled, fillcolor="#f5b7b1"];
+    findMember [label="Look up Member,\ncount open loans", shape=box, style=filled, fillcolor="#d6eaf8"];
+    memberExists [label="Member found?", shape=diamond, style=filled, fillcolor="#fdebd0"];
+    memberNotFoundErr [label="Throw\nMemberNotFoundException", shape=box, style=filled, fillcolor="#f5b7b1"];
+    underLimit [label="Under borrowing\nlimit for tier?", shape=diamond, style=filled, fillcolor="#fdebd0"];
+    limitErr [label="Throw\nMemberLimitExceededException", shape=box, style=filled, fillcolor="#f5b7b1"];
+    computeDue [label="Compute due date\n(today + loan period)", shape=box, style=filled, fillcolor="#d6eaf8"];
+    insertTxn [label="INSERT transaction row\n(TransactionDAO)", shape=box, style=filled, fillcolor="#d6eaf8"];
+    updateStatus [label="UPDATE book status\nto ISSUED (BookDAO)", shape=box, style=filled, fillcolor="#d6eaf8"];
+    logIt [label="Append entry to\nactivity log (I/O stream)", shape=box, style=filled, fillcolor="#d6eaf8"];
+    success [label="Show confirmation\nwith due date", shape=oval, style=filled, fillcolor="#a9dfbf"];
+    caught [label="Catch exception in Main,\nprint friendly message,\nreturn to menu", shape=box, style=filled, fillcolor="#f9e79f"];
+
+    start -> input -> validIsbn;
+    validIsbn -> isbnErr [label="no"];
+    validIsbn -> findBook [label="yes"];
+    findBook -> bookExists;
+    bookExists -> bookNotFoundErr [label="no"];
+    bookExists -> bookAvail [label="yes"];
+    bookAvail -> bookUnavailErr [label="no"];
+    bookAvail -> findMember [label="yes"];
+    findMember -> memberExists;
+    memberExists -> memberNotFoundErr [label="no"];
+    memberExists -> underLimit [label="yes"];
+    underLimit -> limitErr [label="no"];
+    underLimit -> computeDue [label="yes"];
+    computeDue -> insertTxn -> updateStatus -> logIt -> success;
+
+    isbnErr -> caught;
+    bookNotFoundErr -> caught;
+    bookUnavailErr -> caught;
+    memberNotFoundErr -> caught;
+    limitErr -> caught;
+}

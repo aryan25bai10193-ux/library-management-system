@@ -1,0 +1,33 @@
+digraph Sequence {
+    rankdir=LR;
+    fontname="Helvetica";
+    node [fontname="Helvetica", fontsize=10, shape=box, style=filled, fillcolor="#d6eaf8"];
+    edge [fontname="Helvetica", fontsize=9];
+
+    Main [label="Main\n(CLI)"];
+    Svc [label="LibraryService"];
+    BDAO [label="BookDAO"];
+    MDAO [label="MemberDAO"];
+    TDAO [label="TransactionDAO"];
+    DB [label="SQLite DB", shape=cylinder, fillcolor="#aeb6bf"];
+
+    Main -> Svc [label="1: issueBook(isbn, memberId)"];
+    Svc -> BDAO [label="2: getByIsbn(isbn)"];
+    BDAO -> DB [label="3: SELECT"];
+    DB -> BDAO [label="4: row" style=dashed];
+    BDAO -> Svc [label="5: Book" style=dashed];
+    Svc -> MDAO [label="6: getById(memberId)"];
+    MDAO -> DB [label="7: SELECT"];
+    DB -> MDAO [label="8: row" style=dashed];
+    MDAO -> Svc [label="9: Member" style=dashed];
+    Svc -> TDAO [label="10: getOpenTransactionsForMember()"];
+    TDAO -> DB [label="11: SELECT"];
+    DB -> TDAO [label="12: rows" style=dashed];
+    TDAO -> Svc [label="13: List<Transaction>" style=dashed];
+    Svc -> Svc [label="14: validate availability\n& borrowing limit"];
+    Svc -> TDAO [label="15: createTransaction()"];
+    TDAO -> DB [label="16: INSERT"];
+    Svc -> BDAO [label="17: updateStatus(ISSUED)"];
+    BDAO -> DB [label="18: UPDATE"];
+    Svc -> Main [label="19: Transaction" style=dashed];
+}
