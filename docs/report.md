@@ -347,8 +347,13 @@ and print a friendly message rather than a stack trace.
 
 ## 14. References
 
-1. Herbert Schildt, *Java: The Complete Reference*, 11th Edition, Oracle
-   Press, 2018.
-2. Oracle Java SE 17 Documentation — <https://docs.oracle.com/en/java/javase/17/>
-3. SQLite JDBC Driver (xerial/sqlite-jdbc) —
-   <https://github.com/xerial/sqlite-jdbc>
+- Herbert Schildt, Java: The Complete Reference, 11th Edition, Oracle Press, 2018.
+- Cay S. Horstmann, Core Java Volume I – Fundamentals, 11th Edition, Pearson, 2018.
+- Oracle Java SE 17 Documentation — https://docs.oracle.com/en/java/javase/17/
+- Oracle, Java Platform, Standard Edition: The Java Tutorials — JDBC Basics — https://docs.oracle.com/javase/tutorial/jdbc/
+- SQLite JDBC Driver (xerial/sqlite-jdbc) — https://github.com/xerial/sqlite-jdbc
+- SQLite Documentation — https://sqlite.org/docs.html
+- Oracle, Java Concurrency and Multithreading — https://docs.oracle.com/javase/tutorial/essential/concurrency/
+- Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides, Design Patterns: Elements of Reusable Object-Oriented Software, Addison-Wesley, 1994.
+- JUnit 5 User Guide — https://junit.org/junit5/docs/current/user-guide/
+- Apache Maven Documentation — https://maven.apache.org/guides/
