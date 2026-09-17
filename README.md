@@ -1,88 +1,123 @@
-# Library Management System (Java + JDBC/SQLite)
+# Library Management System
 
-It's a librarian-side tool: manage a book catalog, register members, issue/return/renew loans, calculate overdue fines automatically, and export reports. Everything runs in the terminal and is backed by a real SQLite database through JDBC.
+A command-line library management system built with Java, JDBC, and SQLite.
 
-## What it does
+The application allows librarians to manage books and members, issue and return books, renew loans, calculate overdue fines, and export reports. All data is stored locally in SQLite, so no separate database server is required.
 
-- Add, remove, list, and search books by keyword
-- Register members under STUDENT / FACULTY / GUEST tiers — each tier has its own borrowing limit and loan period
-- Issue, return, and renew loans, with checks for availability, borrowing limits, and renewal eligibility (all enforced through custom exceptions)
-- Calculate overdue fines automatically — Rs. 5/day after a 1-day grace period
-- Run a background thread that scans for overdue loans every so often and logs them, without blocking the main CLI
-- Export the catalog or the current overdue list to a timestamped `.txt` file, plus keep a running `activity.log`
-- Store everything in SQLite, so there's no separate database server to install
+## Features
 
-## Built with
+- Add, remove, list, and search books
+- Register members under the `STUDENT`, `FACULTY`, or `GUEST` categories
+- Apply different borrowing limits and loan periods for each member category
+- Issue, return, and renew books
+- Check book availability before issuing a loan
+- Enforce borrowing limits and renewal rules
+- Handle errors using custom exceptions
+- Calculate overdue fines automatically
+- Charge Rs. 5 per day after a one-day grace period
+- Run a background thread that checks for overdue loans
+- Export the book catalog and overdue loans to timestamped text files
+- Maintain an `activity.log` file
+- Store application data in an SQLite database
 
-- Java 17+
-- JDBC + the SQLite JDBC driver (`org.xerial:sqlite-jdbc`)
-- Java Collections (`ArrayList`, `HashMap`)
-- Java I/O streams (`BufferedWriter`/`FileWriter`) for reports and logging
-- Maven for the build
-- JUnit 5 for tests
+## Technologies Used
 
-## Project layout
+- Java 17 or later
+- JDBC
+- SQLite
+- Maven
+- JUnit 5
+- Java Collections, including `ArrayList` and `HashMap`
+- Java I/O classes such as `BufferedWriter` and `FileWriter`
 
-```
+## Project Structure
+
+```text
 library-management-system/
 ├── pom.xml
 ├── src/
 │   ├── main/java/com/vit/library/
-│   │   ├── model/        # Person, Member, Librarian, Book, Transaction, enums, interfaces
-│   │   ├── exception/    # Custom checked/unchecked exceptions
-│   │   ├── dao/          # JDBC data-access classes + DatabaseManager
-│   │   ├── service/      # LibraryService - core business logic
-│   │   ├── thread/       # OverdueChecker background thread
-│   │   ├── util/         # FineCalculator, IsbnValidator, ReportExporter
-│   │   └── ui/           # Main - CLI entry point
-│   └── test/java/com/vit/library/service/   # JUnit 5 unit tests
+│   │   ├── model/        # Person, Member, Librarian, Book, Transaction, enums, and interfaces
+│   │   ├── exception/    # Custom checked and unchecked exceptions
+│   │   ├── dao/          # JDBC data-access classes and DatabaseManager
+│   │   ├── service/      # LibraryService and application logic
+│   │   ├── thread/       # Background overdue checker
+│   │   ├── util/         # FineCalculator, IsbnValidator, and ReportExporter
+│   │   └── ui/           # Main command-line entry point
+│   └── test/java/com/vit/library/service/
 ├── docs/diagrams/        # Architecture, workflow, UML, and ER diagrams
-├── data/                 # SQLite database file (created automatically)
-└── reports/              # Exported reports and activity log (created automatically)
+├── data/                 # SQLite database created at runtime
+└── reports/              # Exported reports and activity log
 ```
 
-## Before you start
+## Requirements
 
-You'll need:
+You need the following installed:
 
-**JDK 17 or later.** Check with `java -version` and `javac -version`. Grab it from [Adoptium](https://adoptium.net/) if you don't have it, or install through your package manager (`sudo apt install openjdk-21-jdk` on Ubuntu).
+- JDK 17 or later
+- Maven 3.8 or later
 
-**Maven 3.8+.** Check with `mvn -version`. Get it from [maven.apache.org](https://maven.apache.org/) or via your package manager (`sudo apt install maven`).
+Check your Java installation:
 
-You don't need to install a database separately — SQLite is embedded, and Maven pulls the driver in for you.
+```bash
+java -version
+javac -version
+```
+
+Check your Maven installation:
+
+```bash
+mvn -version
+```
+
+If Java is not installed, you can download it from [Adoptium](https://adoptium.net/).
+
+Maven is available from [maven.apache.org](https://maven.apache.org/) and through most package managers.
+
+You do not need to install SQLite separately. The database is embedded, and Maven downloads the SQLite JDBC driver during the build.
 
 ## Setup
 
-Clone it:
+Clone the repository:
 
 ```bash
-git clone https://github.com/{your-username}/{your-repo-name}.git
-cd {your-repo-name}
+git clone https://github.com/aryan25bai10193-ux/library-management-system.git
+cd library-management-system
 ```
 
-Build it:
+## Build
+
+Build the project with:
 
 ```bash
 mvn clean package
 ```
 
-This compiles everything, runs the unit tests, and produces a runnable jar at `target/library-management-system.jar` (the SQLite driver is bundled in, so there's no classpath juggling).
+This compiles the source code, runs the unit tests, and creates the executable jar:
 
-Want to skip the tests?
+```text
+target/library-management-system.jar
+```
+
+The SQLite driver is included in the jar, so no additional classpath configuration is needed.
+
+To build without running the tests:
 
 ```bash
 mvn clean package -DskipTests
 ```
 
-## Running it
+## Running the Application
+
+Start the application with:
 
 ```bash
 java -jar target/library-management-system.jar
 ```
 
-You'll land on a menu:
+The main menu includes the following options:
 
-```
+```text
 =================================================
  LIBRARY MANAGEMENT SYSTEM
 =================================================
@@ -105,30 +140,82 @@ You'll land on a menu:
 Enter your choice:
 ```
 
-Type a number, follow the prompts. On the first run it creates `data/library.db` and the tables it needs on its own — nothing to set up by hand.
+Enter a menu number and follow the prompts.
 
-A decent first run: add a book (1), register a member (4), then issue that book to the member (7) — that walks through the main workflow end to end.
+On the first run, the application creates the following automatically:
 
-## Changing the config
+- `data/library.db`
+- The required database tables
+- The `reports/` directory when reports or logs are created
 
-There's no separate config file. To change the fine rate or grace period, edit the constants in `src/main/java/com/vit/library/util/FineCalculator.java`. The overdue-checker's scan interval (30 seconds by default) is set where `OverdueChecker` gets constructed in `src/main/java/com/vit/library/ui/Main.java`.
+Nothing needs to be configured manually.
+
+## Basic Workflow
+
+To test the main workflow:
+
+1. Add a book using option `1`.
+2. Register a member using option `4`.
+3. Issue the book using option `7`.
+4. View the open loan using option `10`.
+5. Return the book using option `8`.
+6. Export a report using option `12` or `13`.
+
+After issuing a book, it should appear as `Issued` when viewing all books.
+
+## Configuration
+
+There is no separate configuration file.
+
+To change the fine rate or grace period, edit the constants in:
+
+```text
+src/main/java/com/vit/library/util/FineCalculator.java
+```
+
+The overdue checker runs in the background and scans for overdue loans at regular intervals. Its scan interval can be changed in the overdue checker thread implementation.
 
 ## Testing
 
-Unit tests cover fine calculation, ISBN validation, and loan renewal rules:
+Run the unit tests with:
 
 ```bash
 mvn test
 ```
 
-If you'd rather test it by hand, run through the "first run" steps above and check that:
+The tests cover:
 
-- View All Books (2) shows the book as `Issued`
-- View Open Loans (10) shows the loan
-- Return Book (8) marks it returned and reports any fine
-- Export Catalog Report (12) writes a file under `reports/`
+- Fine calculation
+- ISBN validation
+- Loan renewal rules
+
+You can also test the application manually by following the basic workflow above.
+
+When testing manually, check that:
+
+- View All Books shows the correct book status
+- View Open Loans shows the issued loan
+- Return Book marks the loan as returned
+- Any applicable fine is displayed
+- Export Catalog Report creates a file under `reports/`
+- Export Overdue Report creates a file under `reports/`
+
+## Generated Files
+
+The following files are created while the application runs:
+
+```text
+data/library.db
+reports/activity.log
+reports/*.txt
+```
+
+The database and report files are generated at runtime and are excluded from version control through `.gitignore`.
 
 ## Notes
 
-- `data/library.db` and everything under `reports/` are generated at runtime and left out of version control (see `.gitignore`).
-- It's terminal-only — no GUI setup needed to run or evaluate it.
+- The application is terminal-based.
+- No graphical interface is required.
+- No separate database server is required.
+- SQLite is used as the local database.
+- The background overdue checker does not block the main command-line interface.
